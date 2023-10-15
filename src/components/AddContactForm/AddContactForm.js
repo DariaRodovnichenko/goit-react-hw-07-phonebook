@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { addContact } from 'redux/contactsSlice';
+import { addContact } from 'redux/operations';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -12,7 +12,7 @@ import {
   StyledField,
 } from './AddContactForm.styled';
 
-const phonePattern = /^\d{3}-\d{2}-\d{2}$/;
+// const phonePattern = /^\d{3}-\d{2}-\d{2}$/;
 
 const FormSchema = Yup.object().shape({
   name: Yup.string()
@@ -20,8 +20,8 @@ const FormSchema = Yup.object().shape({
     .max(50, 'Too Long!')
     .required('Required'),
 
-  number: Yup.string()
-    .matches(phonePattern, 'Invalid phone number format. Use XXX-XX-XX.')
+  phone: Yup.string()
+    // .matches(phonePattern, 'Invalid phone number format. Use XXX-XX-XX.')
     .required('Required'),
 });
 
@@ -31,11 +31,11 @@ const AddContactForm = ({ addContact }) => {
       <Formik
         initialValues={{
           name: '',
-          number: '',
+          phone: '',
         }}
         validationSchema={FormSchema}
         onSubmit={(values, actions) => {
-          addContact(values.name, values.number);
+          addContact({ name: values.name, phone: values.phone });
           actions.resetForm();
         }}
       >
@@ -54,11 +54,11 @@ const AddContactForm = ({ addContact }) => {
             <Label>
               Number
               <StyledField
-                name="number"
+                name="phone"
                 type="tel"
-                hasError={touched.number && errors.number}
+                hasError={touched.phone && errors.phone}
               />
-              <ErrorMsg name="number" component="div" />
+              <ErrorMsg name="phone" component="div" />
             </Label>
 
             <SubmitBtn type="submit">Add contact</SubmitBtn>
@@ -70,8 +70,8 @@ const AddContactForm = ({ addContact }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  addContact: (name, number) => {
-    dispatch(addContact(name, number)); // Remove .prepare
+  addContact: contact => {
+    dispatch(addContact(contact));
   },
 });
 
