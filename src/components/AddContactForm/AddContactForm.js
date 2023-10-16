@@ -12,20 +12,19 @@ import {
   StyledField,
 } from './AddContactForm.styled';
 
-// const phonePattern = /^\d{3}-\d{2}-\d{2}$/;
-
 const FormSchema = Yup.object().shape({
   name: Yup.string()
     .min(3, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
 
-  phone: Yup.string()
-    // .matches(phonePattern, 'Invalid phone number format. Use XXX-XX-XX.')
-    .required('Required'),
+  phone: Yup.string().required('Required'),
 });
 
-const AddContactForm = ({contacts, addContact }) => {
+const AddContactForm = ({ contacts, addContact }) => {
+  const lowercaseNames = new Set(
+    contacts.map(contact => contact.name.toLowerCase())
+  );
   return (
     <div>
       <Formik
@@ -35,15 +34,13 @@ const AddContactForm = ({contacts, addContact }) => {
         }}
         validationSchema={FormSchema}
         onSubmit={(values, actions) => {
-          const existingContact = contacts.find(
-            contact =>
-              contact.name === values.name && contact.phone === values.phone
-          );
+          const nameToLower = values.name.toLowerCase();
 
-          if (existingContact) {
-            alert('Contact already exists!');
+          if (lowercaseNames.has(nameToLower)) {
+            alert('Contact with this name already exists!');
           } else {
             addContact({ name: values.name, phone: values.phone });
+            lowercaseNames.add(nameToLower);
             actions.resetForm();
           }
         }}
