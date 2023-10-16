@@ -25,7 +25,7 @@ const FormSchema = Yup.object().shape({
     .required('Required'),
 });
 
-const AddContactForm = ({ addContact }) => {
+const AddContactForm = ({contacts, addContact }) => {
   return (
     <div>
       <Formik
@@ -35,8 +35,17 @@ const AddContactForm = ({ addContact }) => {
         }}
         validationSchema={FormSchema}
         onSubmit={(values, actions) => {
-          addContact({ name: values.name, phone: values.phone });
-          actions.resetForm();
+          const existingContact = contacts.find(
+            contact =>
+              contact.name === values.name && contact.phone === values.phone
+          );
+
+          if (existingContact) {
+            alert('Contact already exists!');
+          } else {
+            addContact({ name: values.name, phone: values.phone });
+            actions.resetForm();
+          }
         }}
       >
         {({ errors, touched }) => (
@@ -69,10 +78,14 @@ const AddContactForm = ({ addContact }) => {
   );
 };
 
+const mapStateToProps = state => ({
+  contacts: state.contacts.items,
+});
+
 const mapDispatchToProps = dispatch => ({
   addContact: contact => {
     dispatch(addContact(contact));
   },
 });
 
-export default connect(null, mapDispatchToProps)(AddContactForm);
+export default connect(mapStateToProps, mapDispatchToProps)(AddContactForm);
