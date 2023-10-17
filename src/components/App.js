@@ -1,11 +1,11 @@
 import AddContactForm from './AddContactForm/AddContactForm';
 import ContactList from './ContactList/ContactList';
-import { Filter } from './Filter/Filter';
+import Filter from './Filter/Filter';
 import { MainContainer, SubTitle, Title } from './App.styled';
 import { GlobalStyle } from './GlobalStyles';
 
 const App = () => {
-    return (
+  return (
     <MainContainer>
       <Title>Phonebook</Title>
       <AddContactForm />
